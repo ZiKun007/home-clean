@@ -1,0 +1,13 @@
+[user]
+	name = Kun
+	email = 2052387295@qq.com
+[core]
+	excludesfile = /Users/biezikun/.config/git/gitignore_global
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[safe]
+	directory = /opt/homebrew/Homebrew/Library/Taps/homebrew/homebrew-core
+	directory = /opt/homebrew/Homebrew/Library/Taps/homebrew/homebrew-cask
