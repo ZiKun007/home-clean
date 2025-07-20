@@ -18,21 +18,28 @@ conda_init(){
 }
 # <<< conda initialize <<<
 
-# 历史记录设置
-HISTSIZE=10000                    # 内存中保存的历史命令数量
-SAVEHIST=10                       # 历史记录文件保存数量
-
-# 去重配置：不保存重复命令
-# setopt HIST_IGNORE_ALL_DUPS       # 跳过重复命令（包括连续和非连续的重复）
-setopt HIST_SAVE_NO_DUPS          # 保存命令时跳过重复
-setopt HIST_REDUCE_BLANKS         # 删除多余空格
-
-eval $(/opt/homebrew/bin/brew shellenv) #ckbrew
 source "$(brew --prefix)/opt/zinit/zinit.zsh"
+
+# --- 核心路径定义 ---
+# 环境变量设置
+export LANG=zh_CN.UTF-8
+
+typeset -U path # 确保PATH唯一
+# 系统路径
+path=(
+  /usr/bin
+  /usr/local/bin
+  /opt/homebrew/{bin,sbin}
+  /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin
+  $path
+)
+
+# C/C++ 开发路径
+export CPATH="/opt/homebrew/include:$CPATH"
+export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"
 
 # --- 加载顺序控制 ---
 zsh_config_files=(
-  env.zsh
   alias.zsh
   plugins.zsh   # 设置conda_init()函数冷启动
 )
