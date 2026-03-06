@@ -20,6 +20,7 @@ export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
 export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
 
 # Python
+export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
 export PIP_CONFIG_FILE="$XDG_CONFIG_HOME/pip/pip.conf"
 export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
 # export CONDARC="$HOME/.conda/condarc"
@@ -148,17 +149,17 @@ alias du='du -h -d 1'
 # Conda
 # =========================================================
 
-__conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-  eval "$__conda_setup"
-else
-  if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
-    . "/opt/miniconda3/etc/profile.d/conda.sh"
-  else
-    export PATH="/opt/miniconda3/bin:$PATH"
-  fi
-fi
-unset __conda_setup
+# __conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#   eval "$__conda_setup"
+# else
+#   if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
+#     . "/opt/miniconda3/etc/profile.d/conda.sh"
+#   else
+#     export PATH="/opt/miniconda3/bin:$PATH"
+#   fi
+# fi
+# unset __conda_setup
 
 # =========================================================
 # 其他工具
