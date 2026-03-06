@@ -1,111 +1,158 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# =========================================================
+# ~/.config/zsh/.zshrc
+# WSL-friendly version
+# =========================================================
 
-# 主题设置
-ZSH_THEME="powerlevel10k/powerlevel10k"
-[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
+# ---------------------------------------------------------
+# 基础环境
+# ---------------------------------------------------------
 
-# 核心功能设置
-DISABLE_AUTO_UPDATE=true  # 禁用自动更新
-ZSH_COMPDUMP=$ZSH_CACHE_DIR/.zcompdump-$HOST
+export ZSH="$XDG_CONFIG_HOME/zsh/oh-my-zsh"
+export ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh/oh-my-zsh"
 
-# 环境变量设置
-export HOMEBREW_PREFIX="/opt/homebrew"
-export VSCODE_BIN="/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export HISTFILE="$XDG_DATA_HOME/zsh/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
 
-# 正确设置PATH（使用数组确保路径安全）
-typeset -U path  # 确保PATH唯一性
+export LESSHISTFILE="$XDG_CACHE_HOME/less/.less_history"
+export TMUX_TMPDIR="$XDG_CACHE_HOME/tmux"
+export NUGET_PACKAGES="$XDG_CACHE_HOME/nuget"
+
+mkdir -p "$ZSH_CACHE_DIR" "$TMUX_TMPDIR" "$(dirname "$HISTFILE")" "$(dirname "$LESSHISTFILE")"
+
+# Vim / Neovim 兼容
+export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
+export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
+
+# Python
+export PIP_CONFIG_FILE="$XDG_CONFIG_HOME/pip/pip.conf"
+export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
+
+# Conan
+export CONAN_HOME="$XDG_CONFIG_HOME/conan"
+
+# ---------------------------------------------------------
+# PATH
+# ---------------------------------------------------------
+
+typeset -U path
+
+# 用户本地可执行文件
 path=(
-    "$HOMEBREW_PREFIX/bin"
-    "$HOMEBREW_PREFIX/sbin"
-    "$VSCODE_BIN"
-    $path  # 保留原有PATH
+  "$HOME/.local/bin"
+  "$HOME/bin"
+  $path
 )
 
-# 将数组转换为PATH环境变量
 export PATH=${(j.:.)path}
 
-# 设置其他开发环境变量
-export CPATH="$HOMEBREW_PREFIX/include:$CPATH"
-export LIBRARY_PATH="$HOMEBREW_PREFIX/lib:$LIBRARY_PATH"
+# ---------------------------------------------------------
+# 历史记录优化
+# ---------------------------------------------------------
 
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_SPACE
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
 
-# oh my zsh 插件
+# ---------------------------------------------------------
+# Powerlevel10k instant prompt
+# ---------------------------------------------------------
+
+if [[ -r "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# ---------------------------------------------------------
+# Oh My Zsh
+# ---------------------------------------------------------
+
+ZSH_THEME="powerlevel10k/powerlevel10k"
+DISABLE_AUTO_UPDATE=true
+ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump-$HOST"
+
 plugins=(
-  git               # Git 增强命令
+  git
   fzf
   fzf-tab
-  zsh-autosuggestions   # 命令建议
-  fast-syntax-highlighting  # 语法高亮
+  zsh-autosuggestions
+  fast-syntax-highlighting
   zsh-vi-mode
 )
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
-# ZSH VI Mode Begin---------------------------------------------------
-# Vim 模式设置
+[[ -f "$ZDOTDIR/.p10k.zsh" ]] && source "$ZDOTDIR/.p10k.zsh"
+
+# ---------------------------------------------------------
+# Zsh vi mode
+# ---------------------------------------------------------
+
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 ZVM_KEYTIMEOUT=0.3
-function zvm_config() {
-  # Insert：闪烁竖线
-  ZVM_INSERT_MODE_CURSOR=$'\e[5 q'  
-  # Normal：闪烁方块
-  ZVM_NORMAL_MODE_CURSOR=$'\e[1 q'  
-}
-# 自定义按键绑定
-function zvm_after_init() {
-  zvm_bindkey vicmd 'dL' kill-line  # 删除到行尾
 
-  # Normal 模式
+function zvm_config() {
+  ZVM_INSERT_MODE_CURSOR=$'\e[5 q'
+  ZVM_NORMAL_MODE_CURSOR=$'\e[1 q'
+}
+
+function zvm_after_init() {
+  zvm_bindkey vicmd 'dL' kill-line
+
   zvm_bindkey vicmd 'H' beginning-of-line
   zvm_bindkey vicmd 'L' end-of-line
 
-  
-  # Visual 模式
   zvm_bindkey visual 'H' beginning-of-line
   zvm_bindkey visual 'L' end-of-line
 }
-# ZSH VI MODE END--------------------------------------------------------
 
+# ---------------------------------------------------------
+# Alias
+# ---------------------------------------------------------
 
-# 命令别名 BEGIN------------------------------------------------
-alias ..="cd .."
-alias l="ls -al"
-alias ll='ls -alFh'                # 详细列表
-alias lt='ls -ltrh'                # 按时间倒序（最近修改在后）
-alias cls="clear"
-alias tl="tmux list-sessions"
-alias tkss="tmux kill-session -t"
-alias ta="tmux attach -t"
-alias ts="tmux new-session -s"
-alias zshconfig="vim $ZDOTDIR/.zshrc"
+alias ..='cd ..'
+alias ...='cd ../..'
+alias l='ls -al'
+alias ll='ls -alFh'
+alias lt='ls -ltrh'
+alias cls='clear'
 
-# 进程管理
+# tmux
+alias tl='tmux list-sessions'
+alias tkss='tmux kill-session -t'
+alias ta='tmux attach -t'
+alias ts='tmux new-session -s'
+alias tm='tmux'
+
+# config
+alias zshconfig='vim "$ZDOTDIR/.zshrc"'
+alias zshenvconfig='vim "$HOME/.zshenv"'
+alias zshreload='source "$ZDOTDIR/.zshrc"'
+alias tmuxconfig='vim "$XDG_CONFIG_HOME/tmux/tmux.conf"'
+alias tmuxreload='tmux source-file "$XDG_CONFIG_HOME/tmux/tmux.conf"'
+
+# process / disk
 alias psg='ps aux | grep -i'
-
-# 磁盘空间
 alias df='df -h'
-alias du='du -h -d 1'
-# 命令别名 END--------------------------------------------------
+alias du='du -h --max-depth=1'
 
+# WSL 常用
+alias explorer='explorer.exe .'
+alias clip='clip.exe'
 
-# >>> conda initialize >>>
-__conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+# ---------------------------------------------------------
+# zoxide
+# ---------------------------------------------------------
 
-eval "$(zoxide init zsh)"   # 目录快捷跳转
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
+# ---------------------------------------------------------
+# fzf（如果你用的是官方安装脚本）
+# ---------------------------------------------------------
+
+[[ -f "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
+[[ -f "$ZDOTDIR/.fzf.zsh" ]] && source "$ZDOTDIR/.fzf.zsh"

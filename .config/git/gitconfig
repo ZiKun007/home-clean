@@ -1,8 +1,8 @@
 [user]
-	name = Kun
+	name = kun
 	email = 2052387295@qq.com
 [core]
-	excludesfile = /Users/biezikun/.config/git/gitignore_global
+	excludesfile = /home/.config/git/gitignore_global
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
