@@ -35,7 +35,6 @@ home-clean/
 │   ├── share/
 │   └── state/
 ├── .zshenv             # Zsh 环境变量入口
-├── .tmux.conf          # Tmux 主配置文件
 └── setup.sh            # 主入口部署与安装脚本
 ```
 
