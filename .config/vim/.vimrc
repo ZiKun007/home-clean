@@ -16,8 +16,8 @@ nnoremap dH d^
 " ---------------- UI Settings ------------------------------
 syntax enable
 set cursorline
-hi cursorline guibg=#00ff00
-hi CursorColumn guibg=#00ff00
+hi cursorline guibg=#2d2d2d
+hi CursorColumn guibg=#2d2d2d
 
 " Colors & font
 set background=dark
@@ -37,6 +37,8 @@ set selectmode=mouse,key
 
 " ---------------- Indentation ------------------------------
 set expandtab
+autocmd FileType makefile set noexpandtab
+
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -62,18 +64,36 @@ set nobackup
 set noswapfile
 
 set autowrite
+set hidden
+
+set wildmenu
+set wildmode=longest:full,full
+
+set updatetime=50
 
 " ---------------- Clipboard ---------------------------------
-set clipboard+=unnamed
+if has('unnamedplus')
+  set clipboard+=unnamedplus
+else
+  set clipboard+=unnamed
+endif
 
 " ---------------- Cursor Shape ------------------------------
-" Changed \e to \<Esc> for better compatibility in Vim script strings
-let &t_SI="\<Esc>[5 q"   " insert mode (blinking bar)
-let &t_SR="\<Esc>[4 q"   " replace mode (solid underline)
-let &t_EI="\<Esc>[1 q"   " normal mode (blinking block)
+set ttimeout
+set ttimeoutlen=50
 
-" Fix startup cursor issue (Added the missing backslash)
-autocmd VimEnter * silent! execute "normal! \<Esc>"
+if has('gui_running')
+  let &t_SI="\e[5 q"
+  let &t_SR="\e[3 q"
+  let &t_EI="\e[2 q"
+else
+  let &t_SI="\e[1 q"
+  let &t_SR="\e[4 q"
+  let &t_EI="\e[2 q"
+endif
+
+" Fix startup cursor issue
+autocmd VimEnter * silent! execute "normal! \e"
 
 " ---------------- History & Misc ----------------------------
 set history=1000
@@ -89,6 +109,16 @@ set guioptions-=T
 set guioptions-=m
 
 " ---------------- Cache directories -------------------------
+if has('vim_starting')
+  let $XDG_CACHE_HOME = exists($XDG_CACHE_HOME) ? $XDG_CACHE_HOME : $HOME . '/.cache'
+endif
+
+let s:vim_cache = $XDG_CACHE_HOME . '/vim'
+call mkdir(s:vim_cache, 'p')
+call mkdir(s:vim_cache . '/undo', 'p')
+call mkdir(s:vim_cache . '/backup', 'p')
+call mkdir(s:vim_cache . '/swap', 'p')
+
 set viminfo+=n$XDG_CACHE_HOME/vim/viminfo
 set undodir=$XDG_CACHE_HOME/vim/undo//
 set backupdir=$XDG_CACHE_HOME/vim/backup//

@@ -11,9 +11,9 @@ export ZSH="$XDG_CONFIG_HOME/zsh/oh-my-zsh"
 export ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh/oh-my-zsh"
 
 # 全局缓存/状态重定向
+export LESSHISTFILE="$XDG_CACHE_HOME/less/.less_history"
+export TMUX_TMPDIR="$XDG_CACHE_HOME/tmux"
 export NUGET_PACKAGES="$XDG_CACHE_HOME/nuget"
-export TMUX_TMPDIR="$XDG_CACHE_HOME"
-export LESSHISTFILE="$XDG_CACHE_HOME/less"
 
 mkdir -p "$ZSH_CACHE_DIR" "$XDG_CACHE_HOME/zsh" "$(dirname "$HISTFILE")" 2>/dev/null
 
@@ -21,8 +21,8 @@ mkdir -p "$ZSH_CACHE_DIR" "$XDG_CACHE_HOME/zsh" "$(dirname "$HISTFILE")" 2>/dev/
 export DISABLE_AUTO_TITLE=true
 
 # Vim
-export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
-export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
+export MYVIMRC="$XDG_CONFIG_HOME/vim/.vimrc"
+export VIMINIT="source $MYVIMRC"
 
 # Python
 export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
@@ -183,20 +183,24 @@ alias uadd='uv add'
 alias usync='uv sync'
 
 # =========================================================
-# Conda
+# Conda（只在 miniconda 存在时加载）
 # =========================================================
 
-# __conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#   eval "$__conda_setup"
-# else
-#   if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
-#     . "/opt/miniconda3/etc/profile.d/conda.sh"
-#   else
-#     export PATH="/opt/miniconda3/bin:$PATH"
-#   fi
-# fi
-# unset __conda_setup
+if [[ -d "/opt/miniconda3" ]] || [[ -d "$HOME/miniconda3" ]]; then
+  if [[ -x "/opt/miniconda3/bin/conda" ]]; then
+    __conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+  elif [[ -x "$HOME/miniconda3/bin/conda" ]]; then
+    __conda_setup="$('$HOME/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+  fi
+
+  if [[ -n "$__conda_setup" ]]; then
+    eval "$__conda_setup"
+  else
+    [[ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]] && . "/opt/miniconda3/etc/profile.d/conda.sh"
+    [[ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]] && . "$HOME/miniconda3/etc/profile.d/conda.sh"
+  fi
+  unset __conda_setup
+fi
 
 # =========================================================
 # 其他工具
