@@ -1,4 +1,4 @@
-" ================= Basic =================
+"================= Basic =================
 set nocompatible
 syntax enable
 
@@ -77,8 +77,14 @@ vnoremap L $
 nnoremap H ^
 vnoremap H ^
 
+" Quick indent
+nnoremap > >>
+nnoremap < <<
+vnoremap > >gv
+vnoremap < <gv
+
 " 不建议再映射成普通模式里的 wq 序列，容易影响正常输入节奏
-nnoremap <leader>wq :wq!<CR>
+nnoremap wq :wq!<CR>
 
 nnoremap dL d$
 nnoremap dH d^
