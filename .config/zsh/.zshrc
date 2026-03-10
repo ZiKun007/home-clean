@@ -87,7 +87,7 @@ export PATH=${(j.:.)path}
 # ---------------------------------------------------------
 
 # Vim / Neovim
-export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
+export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/.vimrc" | source $MYVIMRC'
 export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
 
 # Python
