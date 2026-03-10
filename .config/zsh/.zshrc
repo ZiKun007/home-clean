@@ -15,6 +15,11 @@ export NUGET_PACKAGES="$XDG_CACHE_HOME/nuget"
 export TMUX_TMPDIR="$XDG_CACHE_HOME"
 export LESSHISTFILE="$XDG_CACHE_HOME/less"
 
+mkdir -p "$ZSH_CACHE_DIR" "$XDG_CACHE_HOME/zsh" "$(dirname "$HISTFILE")" 2>/dev/null
+
+# 禁用自动标题（提升性能）
+export DISABLE_AUTO_TITLE=true
+
 # Vim
 export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
 export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
@@ -43,11 +48,16 @@ export VSCODE_BIN="/Applications/Visual Studio Code.app/Contents/Resources/app/b
 
 typeset -U path
 path=(
+  "$HOME/.local/bin"
+  "$HOME/bin"
   "$HOMEBREW_PREFIX/bin"
   "$HOMEBREW_PREFIX/sbin"
   "$VSCODE_BIN"
   $path
 )
+
+# 用户级 uv tools 兜底
+[[ -d "$HOME/.local/share/uv/tools" ]] && path=("$HOME/.local/share/uv/tools" $path)
 
 export PATH=${(j.:.)path}
 export CPATH="$HOMEBREW_PREFIX/include${CPATH:+:$CPATH}"
@@ -61,12 +71,32 @@ export HISTFILE="$XDG_DATA_HOME/zsh/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 
+HIST_STAMPS="yyyy-mm-dd"
+
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
+
+# =========================================================
+# 补全优化
+# =========================================================
+
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+autoload -Uz compinit
+compinit -d "$XDG_CACHE_HOME/zsh/.zcompdump-$HOST"
+
+# 自动纠错
+setopt CORRECT
+setopt CORRECT_ALL
 
 # =========================================================
 # Powerlevel10k instant prompt
@@ -90,8 +120,8 @@ plugins=(
   fzf
   fzf-tab
   zsh-autosuggestions
-  fast-syntax-highlighting
   zsh-vi-mode
+  fast-syntax-highlighting
 )
 
 source "$ZSH/oh-my-zsh.sh"
@@ -145,6 +175,13 @@ alias psg='ps aux | grep -i'
 alias df='df -h'
 alias du='du -h -d 1'
 
+# Python / uv
+alias py='python'
+alias venv='uv venv'
+alias urun='uv run'
+alias uadd='uv add'
+alias usync='uv sync'
+
 # =========================================================
 # Conda
 # =========================================================
@@ -166,3 +203,6 @@ alias du='du -h -d 1'
 # =========================================================
 
 eval "$(zoxide init zsh)"
+
+# opencode
+export PATH=/home/kun24/.opencode/bin:$PATH
