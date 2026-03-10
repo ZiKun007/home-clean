@@ -24,11 +24,16 @@ mkdir -p \
   "$TMUX_TMPDIR" \
   "$(dirname "$HISTFILE")" \
   "$(dirname "$LESSHISTFILE")" \
-  "$UV_CACHE_DIR"
+  "$UV_CACHE_DIR" 2>/dev/null
+
+# 禁用自动标题（提升性能）
+export DISABLE_AUTO_TITLE=true
 
 # ---------------------------------------------------------
 # 历史记录优化
 # ---------------------------------------------------------
+
+HIST_STAMPS="yyyy-mm-dd"
 
 setopt APPEND_HISTORY
 setopt INC_APPEND_HISTORY
@@ -38,6 +43,22 @@ setopt HIST_SAVE_NO_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_SPACE
+
+# ---------------------------------------------------------
+# 补全优化
+# ---------------------------------------------------------
+
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+autoload -Uz compinit
+compinit -d "$XDG_CACHE_HOME/zsh/.zcompdump-$HOST"
+
+# 自动纠错
+setopt CORRECT
+setopt CORRECT_ALL
 
 # ---------------------------------------------------------
 # PATH
@@ -107,8 +128,8 @@ plugins=(
   fzf
   fzf-tab
   zsh-autosuggestions
-  fast-syntax-highlighting
   zsh-vi-mode
+  fast-syntax-highlighting
 )
 
 source "$ZSH/oh-my-zsh.sh"
@@ -235,3 +256,9 @@ alias usync='uv sync'
 # ---------------------------------------------------------
 
 export PATH=${(j.:.)path}
+
+# uv 安装配置
+. "$HOME/.local/share/../bin/env"
+
+# opencode
+export PATH=/home/kun24/.opencode/bin:$PATH
