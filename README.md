@@ -19,24 +19,6 @@
 - **轻量级编辑:** 针对 C++ 开发优化的纯 Vim 配置，支持基础语法高亮，拒绝臃肿。
 - **SLAM 友好:** 包含常用的 CMake、GDB 调试别名及 ROS 环境变量快速加载脚本。
 
-## 📂 仓库结构 (Directory Structure)
-
-```text
-home-clean/
-├── LICENSE
-├── README.md           # 中文文档
-├── README_en.md        # 英文文档
-├── config/             # 存放应用核心配置
-│   ├── fonts/          # 终端极客字体 (Nerd Fonts 等)
-│   ├── tmux/           # Tmux 详细配置与插件
-│   ├── vim/            # Vim 纯净版配置
-│   └── zsh/            # Zsh 主题与别名配置
-├── local/              # 存放本地数据与状态
-│   ├── share/
-│   └── state/
-├── .zshenv             # Zsh 环境变量入口
-└── setup.sh            # 主入口部署与安装脚本
-```
 
 ## 📂 仓库结构 (Directory Structure)
 
@@ -46,6 +28,7 @@ home-clean/
 ├── README.md
 ├── config/             # 存放应用核心配置
 │   ├── fonts/          # 终端极客字体 (Nerd Fonts 等)
+│   ├── git/            # git 详细配置
 │   ├── tmux/           # Tmux 详细配置与插件
 │   ├── vim/            # Vim 纯净版配置
 │   └── zsh/            # Zsh 主题与别名配置
@@ -53,7 +36,6 @@ home-clean/
 │   ├── share/
 │   └── state/
 ├── .zshenv             # Zsh 环境变量入口
-├── .tmux.conf          # Tmux 主配置文件
 └── setup.sh            # 主入口部署与安装脚本
 ```
 

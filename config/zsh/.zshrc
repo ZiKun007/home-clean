@@ -252,7 +252,7 @@ alias uadd='uv add'
 alias usync='uv sync'
 
 # ---------------------------------------------------------
-# 最终整理 PATH（防止上面 path 更新未导出）
+# 最终整理 PATH（防止上面 path 更新未导出）, 以及其他命令汇总
 # ---------------------------------------------------------
 
 export PATH=${(j.:.)path}
@@ -262,3 +262,6 @@ export PATH=${(j.:.)path}
 
 # opencode
 export PATH=/home/kun24/.opencode/bin:$PATH
+
+# tmux
+[ -f "$XDG_CONFIG_HOME/tmux/tmux.conf" ] && tmux source-file "$XDG_CONFIG_HOME/tmux/tmux.conf"
